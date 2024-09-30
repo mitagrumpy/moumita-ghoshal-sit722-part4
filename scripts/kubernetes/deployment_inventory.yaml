@@ -1,0 +1,41 @@
+# Your Solution
+# To deploy:
+# kubectl apply -f scripts/deployment_inventory.yaml
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projectweek08invent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projectweek08invent
+  template:
+    metadata:
+      labels:
+        app: projectweek08invent
+    spec:
+      containers: 
+      - name: inventory-management
+        image: project82c.azurecr.io/inventory_management:1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://project82c_user:ouszM00b0TYPo7e0pdW4lPqNwQQb1YKS@dpg-crt3he56l47c73d69si0-a.ohio-postgres.render.com/project82c"
+        ports:
+        - containerPort: 8001
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: projectweek08invent
+spec:
+  selector:
+    app: projectweek08invent
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
